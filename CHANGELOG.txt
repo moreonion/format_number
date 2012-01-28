@@ -1,0 +1,4 @@
+7.x-1.x-dev
+===========
+
+- #1091914 by SQP, tinker: Port format_number module to D7 from D6.
