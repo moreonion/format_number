@@ -1,4 +1,5 @@
 7.x-1.x-dev
 ===========
 
+- Remove D6 stuff from .install script.
 - #1091914 by SQP, tinker: Port format_number module to D7 from D6.
