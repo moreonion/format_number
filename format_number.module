@@ -372,7 +372,7 @@ function parse_formatted_number($formatted_number, $required = TRUE) {
 /**
  * Implements hook_element_info().
  */
-function format_number_elements() {
+function format_number_element_info() {
   return array(
     'numericfield' => array(
       '#input' => TRUE,
