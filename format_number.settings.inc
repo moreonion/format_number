@@ -8,7 +8,7 @@
 /**
  * Module settings form.
  */
-function format_number_settings_site() {
+function format_number_site_settings_form() {
   $form = array();
   $form['format_number_decimal_point'] = array(
     '#type' => 'radios',
@@ -31,14 +31,14 @@ function format_number_settings_site() {
     '#options' => array(t('Disabled'), t('Enabled')),
     '#description' => t('When enabled, users can set their own number formatting options.'),
   );
-  $form['#validate'] = array('format_number_settings_site_validate');
+  $form['#validate'] = array('format_number_site_settings_form_validate');
   return system_settings_form($form);
 }
 
 /**
  * Validate the module settings form.
  */
-function format_number_settings_site_validate($form, &$form_state) {
+function format_number_site_settings_form_validate($form, &$form_state) {
   if ($form_state['values']['format_number_decimal_point'] == $form_state['values']['format_number_thousands_sep']) {
     form_set_error('format_number_thousands_sep', t('Decimal point and thousands separator cannot be defined to use the same symbol.'));
   }
@@ -52,7 +52,7 @@ function format_number_settings_site_validate($form, &$form_state) {
  * @return array
  *   A $form array containing the form elements to display.
  */
-function format_number_settings_user(&$edit) {
+function format_number_user_settings_form(&$edit) {
   $form = array();
   $form['format_number'] = array(
     '#type' => 'fieldset',
@@ -80,7 +80,7 @@ function format_number_settings_user(&$edit) {
 /**
  * Validate the user settings form.
  */
-function format_number_settings_user_validate($form, &$form_state) {
+function format_number_user_settings_form_validate($form, &$form_state) {
   $edit = &$form_state['values'];
   if (isset($edit['decimal_point']) && $edit['decimal_point'] == $edit['thousands_sep']) {
     form_set_error('thousands_sep', t('Decimal point and thousands separator cannot be defined to use the same symbol.'));

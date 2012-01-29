@@ -43,7 +43,7 @@ function format_number_menu() {
     'title' => 'Number format',
     'description' => 'Configure site wide number format settings.',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('format_number_settings_site'),
+    'page arguments' => array('format_number_site_settings_form'),
     'access arguments' => array('configure default number format'),
     'file' => 'format_number.settings.inc',
   );
@@ -67,8 +67,8 @@ function format_number_theme() {
 function format_number_form_user_profile_form_alter(&$form, &$form_state) {
   if ($form['#user_category'] == 'account' && variable_get('format_number_user_configurable', 0)) {
     module_load_include('inc', 'format_number', 'format_number.settings');
-    $form += format_number_settings_user($form_state['user']->data);
-    $form['#validate'][] = 'format_number_settings_user_validate';
+    $form += format_number_user_settings_form($form_state['user']->data);
+    $form['#validate'][] = 'format_number_user_settings_form_validate';
   }
 }
 
