@@ -49,6 +49,7 @@ function format_number_site_settings_form_validate($form, &$form_state) {
  *
  * @param array $edit
  *   The array of form values submitted by the user.
+ *
  * @return array
  *   A $form array containing the form elements to display.
  */

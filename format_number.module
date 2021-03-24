@@ -2,10 +2,12 @@
 
 /**
  * @file
- * This module provides a method to configure number formats (site default and
- * user defined) with configurable decimal point and thousand separators.
- * It also exposes several functions that can be used by other contributed or
- * custom modules to display numbers accordingly.
+ * This module provides a method to configure number formats.
+ *
+ * It’s possible to configure a site default format and user specific formats
+ * with configurable decimal point and thousand separators. It also exposes
+ * several functions that can be used by other modules to display numbers
+ * accordingly.
  */
 
 /**
@@ -122,6 +124,7 @@ function format_number_get_thousands_separator_options() {
  *   The name of the option to retrieve (optional). Available options:
  *   - 'thousands_sep'  A one character string (it could be empty).
  *   - 'decimal_point'  A one character string.
+ *
  * @return mixed
  *   If name is not specified, an array with all options is returned.
  *   If name does not exist, NULL is returned.
@@ -165,13 +168,13 @@ function format_number_add_js() {
 }
 
 /**
- * Format a number with (site default or user defined) thousands separator and
- * decimal point.
+ * Format a number with thousands separators and a decimal point.
  *
  * @param float $number
  *   The number being formatted.
  * @param int $decimals
  *   Number of decimal digits. Use -1 for any number if decimals.
+ *
  * @return string
  *   The formatted number.
  */
@@ -186,7 +189,8 @@ function format_number($number, $decimals = 0) {
   $number = number_format((float) $number, FORMAT_NUMBER_MAX_PRECISION, '.', '');
 
   if ($decimals < 0) {
-    // Count decimal places (ignoring trailing zeros to the right of the decimal point).
+    // Count decimal places (ignoring trailing zeros to the right of the
+    // decimal point).
     $decimals = (strpos($number, '.') === FALSE ? 0 : drupal_strlen(preg_replace('#^.*\.([0-9]*?)0*$#', '\1', $number)));
   }
   // Avoid issues caused by PHP rounding limitations.
@@ -202,10 +206,11 @@ function format_number($number, $decimals = 0) {
 /**
  * Formats numbers to a specified number of significant figures.
  *
- * @param number $number
+ * @param mixed $number
  *   The number to format.
- * @param integer $significant_figures
+ * @param int $significant_figures
  *   The number of significant figures to round and format the number to.
+ *
  * @return string
  *   The rounded and formatted number.
  */
@@ -228,18 +233,19 @@ function format_number_significant_figures($number, $significant_figures) {
  *
  * This function implements lenient parsing when possible, and only falls
  * back to site/user defined symbols when in doubt.
- * See http://www.unicode.org/reports/tr35/tr35-11.html#Lenient_Parsing
- *
- * @todo
- *  The algorithm probably needs optimization (using regular expressions?).
  *
  * @param string $formatted_number
  *   A number formatted with localized thousands separator and decimal point.
- * @param boolean $required
+ * @param bool $required
  *   If input is empty string, return FALSE when number is strictly required,
  *   otherwise an empty string is returned as 0.
- * @return number
+ *
+ * @return numeric
  *   A valid PHP number. FALSE when input cannot be deciphered.
+ *
+ * @see http://www.unicode.org/reports/tr35/tr35-11.html#Lenient_Parsingi
+ *
+ * @todo The algorithm probably needs optimization (using regular expressions?).
  */
 function parse_formatted_number($formatted_number, $required = TRUE) {
   static $format_options, $decimal_point_options, $thousands_separator_options;
@@ -388,16 +394,18 @@ function format_number_element_info() {
 /**
  * Compute the lower or upper bounds of a number.
  *
- * @param $direction
- *   'lower' to compute the minimum possible value.
- *   'upper' to compute the maximum possible value.
- * @param $precision
+ * @param string $direction
+ *   String which is either:
+ *   - 'lower' to compute the minimum possible value.
+ *   - 'upper' to compute the maximum possible value.
+ * @param int $precision
  *   Integer that indicates the total number of digits available to store the
  *   number, including the digits to the right of the decimal point.
- * @param $decimals
+ * @param int $decimals
  *   Integer that indicates the number of available digits to the right of
  *   the decimal point.
- * @return
+ *
+ * @return string
  *   The minimum or maximum possible value.
  */
 function format_number_compute_boundary($direction, $precision = 0, $decimals = 0) {
@@ -407,18 +415,14 @@ function format_number_compute_boundary($direction, $precision = 0, $decimals = 
 /**
  * Process an individual numeric form element.
  *
- * @param $element
+ * @param array $element
  *   The form element being processed.
- * @param $edit
- *   The incoming POST data to populate the form element.
- * @param $form_state
+ * @param array $form_state
  *   A keyed array containing the current state of the form.
- * @param $form
- *   An associative array containing the structure of the form.
  *
  * @ingroup forms
  */
-function format_number_numericfield_process($element, &$form_state) {
+function format_number_numericfield_process(array $element, array &$form_state) {
   $element_precision = (isset($element['#precision']) && (int) $element['#precision'] > 0 ? (int) $element['#precision'] : 12);
   $element_decimals = (isset($element['#decimals']) && (int) $element['#decimals'] >= 0 ? (int) $element['#decimals'] : 0);
 
@@ -474,12 +478,13 @@ function format_number_numericfield_process($element, &$form_state) {
 /**
  * Helper function to determine the value for a numeric form element.
  *
- * @param $element
+ * @param array $element
  *   The form element whose value is being populated.
- * @param $input
+ * @param mixed $input
  *   The incoming input to populate the form element. If this is FALSE,
  *   the element's default value should be returned.
- * @return
+ *
+ * @return mixed
  *   The data that will appear in the $element_state['values'] collection
  *   for this element. Return nothing to use the default.
  *
@@ -487,7 +492,7 @@ function format_number_numericfield_process($element, &$form_state) {
  *
  * @ingroup forms
  */
-function form_type_numericfield_value($element, $input = FALSE) {
+function form_type_numericfield_value(array $element, $input = FALSE) {
   if ($input !== FALSE && $input !== NULL) {
     // Equate $input to the form value to ensure it's marked for validation.
     $value = trim(str_replace(array("\r", "\n"), '', $input));
@@ -504,14 +509,14 @@ function form_type_numericfield_value($element, $input = FALSE) {
 /**
  * Validation of an individual numeric form element.
  *
- * @param $element
+ * @param array $element
  *   The form element being processed.
- * @param $form_state
+ * @param array $form_state
  *   A keyed array containing the current state of the form.
  *
  * @ingroup forms
  */
-function format_number_numericfield_validate($element, &$form_state) {
+function format_number_numericfield_validate(array $element, array &$form_state) {
   $value = $element['#value'];
 
   if ($element['#required'] || $value != '') {
@@ -554,19 +559,26 @@ function format_number_numericfield_validate($element, &$form_state) {
 /**
  * Render a numeric form element.
  *
- * @param $element
- *   An associative array containing the properties of the element.
- * @return
+ * @param array $variables
+ *   An associative array containing the variables passed to the theme function.
+ *
+ * @return string
  *   A themed HTML string representing the input element.
  *
  * @ingroup themeable
  */
-function theme_numericfield($variables) {
+function theme_numericfield(array $variables) {
   format_number_add_js();
 
   $element = &$variables['element'];
   $element['#attributes']['type'] = 'text';
-  element_set_attributes($element, array('id', 'name', 'value', 'size', 'maxlength'));
+  element_set_attributes($element, array(
+    'id',
+    'name',
+    'value',
+    'size',
+    'maxlength',
+  ));
   _form_set_class($element, array('form-text', 'form-numeric'));
   $variables['element']['#children'] = '<input' . drupal_attributes($element['#attributes']) . ' />';
 
